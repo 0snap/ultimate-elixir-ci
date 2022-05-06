@@ -38,7 +38,6 @@ defmodule UltimateElixirCI.MixProject do
     ]
   end
 
-
   defp deps do
     [
       {:credo, "~> 1.6.4", only: [:dev, :test], runtime: false},
