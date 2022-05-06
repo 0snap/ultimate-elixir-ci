@@ -22,9 +22,14 @@ defmodule UltimateElixirCI.MixProject do
         flags: [:error_handling, :race_conditions, :unknown],
         # Error out when an ignore rule is no longer useful so we can remove it
         list_unused_filters: true
-      ]
+      ],
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
+
+  # Compile different paths per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def application do
     [
@@ -32,6 +37,7 @@ defmodule UltimateElixirCI.MixProject do
       extra_applications: [:logger, :runtime_tools]
     ]
   end
+
 
   defp deps do
     [
@@ -66,6 +72,7 @@ defmodule UltimateElixirCI.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup"],
       check: [
         "clean",
         "deps.unlock --check-unused",
@@ -74,7 +81,10 @@ defmodule UltimateElixirCI.MixProject do
         "deps.unlock --check-unused",
         "test --warnings-as-errors",
         "credo"
-      ]
+      ],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
 end
